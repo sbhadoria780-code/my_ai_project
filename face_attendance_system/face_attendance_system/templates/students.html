@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Students — FaceAttend{% endblock %}
+{% block content %}
+<div class="app-shell">
+  {% include "_sidebar.html" %}
+  <div class="main">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div class="page-title">Student Management</div>
+        <div class="page-sub">{{ students|length }} student(s) registered</div>
+      </div>
+      <a href="{{ url_for('add_student') }}" class="btn btn-primary">+ Add Student</a>
+    </div>
+
+    <form class="search-bar" method="GET">
+      <input type="text" name="q" placeholder="Search by name, roll no or department..." value="{{ query }}">
+      <button class="btn btn-outline" type="submit">Search</button>
+    </form>
+
+    <div class="panel">
+      <table>
+        <thead>
+          <tr><th>Photo</th><th>Name</th><th>Roll No</th><th>Department</th><th>Semester</th><th>Face Data</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        {% for s in students %}
+          <tr>
+            <td>
+              {% if s.photo_path %}
+                <img class="avatar-sm" src="/static/uploads/{{ s.photo_path.split('/')[-1] }}">
+              {% else %}
+                <div class="avatar-sm" style="display:flex;align-items:center;justify-content:center;">👤</div>
+              {% endif %}
+            </td>
+            <td>{{ s.name }}</td>
+            <td>{{ s.roll_no }}</td>
+            <td>{{ s.department or '-' }}</td>
+            <td>{{ s.semester or '-' }}</td>
+            <td>
+              {% if s.encoding_path %}<span class="pill pill-present">Registered</span>
+              {% else %}<span class="pill pill-absent">Missing</span>{% endif %}
+            </td>
+            <td style="display:flex;gap:8px;">
+              <a href="{{ url_for('edit_student', student_id=s.id) }}" class="btn btn-outline btn-sm">Edit</a>
+              <form method="POST" action="{{ url_for('delete_student', student_id=s.id) }}"
+                    onsubmit="return confirm('Remove {{ s.name }}? This also deletes their face data.');">
+                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="7" style="color:var(--text-2);text-align:center;padding:30px;">No students found. Click "Add Student" to register one.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

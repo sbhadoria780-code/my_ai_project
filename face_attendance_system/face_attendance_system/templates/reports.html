@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Reports — FaceAttend{% endblock %}
+{% block content %}
+<div class="app-shell">
+  {% include "_sidebar.html" %}
+  <div class="main">
+    <div class="page-title">Attendance Reports</div>
+    <div class="page-sub">Filter, search and export attendance records.</div>
+
+    <form method="GET" style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+      <input type="date" name="date" value="{{ date_filter }}" style="max-width:180px;">
+      <input type="text" name="q" placeholder="Search by name or roll no..." value="{{ query }}" style="max-width:260px;">
+      <button class="btn btn-outline" type="submit">Filter</button>
+      <a href="{{ url_for('reports') }}" class="btn btn-outline">Clear</a>
+      <div style="flex:1;"></div>
+      <a href="{{ url_for('export_report', fmt='csv', date=date_filter, q=query) }}" class="btn btn-primary btn-sm">⬇ Export CSV</a>
+      <a href="{{ url_for('export_report', fmt='excel', date=date_filter, q=query) }}" class="btn btn-primary btn-sm">⬇ Export Excel</a>
+      <button type="button" onclick="window.print()" class="btn btn-outline btn-sm">🖨 Print</button>
+    </form>
+
+    <div class="panel">
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Roll No</th><th>Department</th><th>Subject</th><th>Date</th><th>Time</th><th>Status</th><th>Confidence</th></tr>
+        </thead>
+        <tbody>
+        {% for r in records %}
+          <tr>
+            <td>{{ r.name }}</td>
+            <td>{{ r.roll_no }}</td>
+            <td>{{ r.department or '-' }}</td>
+            <td>{{ r.subject }}</td>
+            <td>{{ r.date }}</td>
+            <td>{{ r.time }}</td>
+            <td><span class="pill {{ 'pill-late' if r.status=='Late' else 'pill-present' }}">{{ r.status }}</span></td>
+            <td>{{ r.confidence }}%</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="8" style="text-align:center;color:var(--text-2);padding:30px;">No attendance records match your filters.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

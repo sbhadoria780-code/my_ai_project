@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}FaceAttend{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="{{ url_for('index') }}" class="brand">
+    <div class="brand-icon">🎯</div>
+    <div class="brand-text">
+      <div class="name">Face<span>Attend</span></div>
+      <div class="tag">Smart Attendance. Made Simple.</div>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint=='index' }}">Home</a>
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint=='dashboard' }}">Dashboard</a>
+      <a href="{{ url_for('students_list') }}" class="{{ 'active' if request.endpoint in ['students_list','add_student','edit_student'] }}">Students</a>
+      <a href="{{ url_for('attendance_page') }}" class="{{ 'active' if request.endpoint=='attendance_page' }}">Attendance</a>
+      <a href="{{ url_for('reports') }}" class="{{ 'active' if request.endpoint=='reports' }}">Reports</a>
+    {% endif %}
+  </div>
+  <div class="nav-cta">
+    {% if current_user.is_authenticated %}
+      <span style="color:var(--text-2);font-size:13px;">Hi, {{ current_user.username }}</span>
+      <a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm">Logout</a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="btn btn-primary">Get Started →</a>
+    {% endif %}
+  </div>
+</nav>
+
+<div>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container" style="padding-top:20px;">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ 'error' if category=='error' else 'success' }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+</div>
+
+{% block content %}{% endblock %}
+
+<footer>
+  &copy; 2026 FaceAttend — Face Recognition Attendance System (Mini Project). Built with Flask, OpenCV &amp; face_recognition.
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

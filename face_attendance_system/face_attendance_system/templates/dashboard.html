@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — FaceAttend{% endblock %}
+{% block content %}
+<div class="app-shell">
+  {% include "_sidebar.html" %}
+  <div class="main">
+    <div class="page-title">Dashboard Overview</div>
+    <div class="page-sub">Welcome back, {{ current_user.username }} — here's what's happening today.</div>
+
+    <div class="grid grid-4" style="margin-bottom:24px;">
+      <div class="stat-card">
+        <div class="top"><span class="label">Total Students</span><div class="stat-icon ic-blue">👥</div></div>
+        <div class="value">{{ stats.total_students }}</div>
+        <a href="{{ url_for('students_list') }}" class="foot" style="color:#93c5fd;">View all students →</a>
+      </div>
+      <div class="stat-card">
+        <div class="top"><span class="label">Present Today</span><div class="stat-icon ic-green">✅</div></div>
+        <div class="value" style="color:#4ade80;">{{ stats.present_today }}</div>
+        <div class="foot">Marked via face scan</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><span class="label">Absent Today</span><div class="stat-icon ic-red">🚫</div></div>
+        <div class="value" style="color:#f87171;">{{ stats.absent_today }}</div>
+        <div class="foot">Not yet scanned</div>
+      </div>
+      <div class="stat-card">
+        <div class="top"><span class="label">Attendance %</span><div class="stat-icon ic-teal">📊</div></div>
+        <div class="value">{{ stats.attendance_pct }}%</div>
+        <div class="foot">Today's rate</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="align-items:start;">
+      <div class="chart-card">
+        <h3>Attendance Trend (Last 7 Days)</h3>
+        <canvas id="trendChart" height="180"></canvas>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin:0 0 16px;font-size:15px;">Recent Attendance</h3>
+        <table>
+          <thead><tr><th>Name</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for r in recent %}
+            <tr>
+              <td>{{ r.name }} <span style="color:var(--text-2);">({{ r.roll_no }})</span></td>
+              <td>{{ r.time }}</td>
+              <td><span class="pill {{ 'pill-late' if r.status=='Late' else 'pill-present' }}">{{ r.status }}</span></td>
+            </tr>
+          {% else %}
+            <tr><td colspan="3" style="color:var(--text-2);">No attendance marked yet today.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if low_attendance %}
+    <div class="panel" style="margin-top:20px;border-color:rgba(245,158,11,0.35);">
+      <h3 style="margin:0 0 14px;font-size:15px;color:#fcd34d;">⚠️ Low Attendance Alert</h3>
+      <table>
+        <thead><tr><th>Name</th><th>Roll No</th><th>Days Present</th></tr></thead>
+        <tbody>
+        {% for s in low_attendance %}
+          <tr><td>{{ s.name }}</td><td>{{ s.roll_no }}</td><td>{{ s.days_present }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+fetch("{{ url_for('api_chart_data') }}")
+  .then(r => r.json())
+  .then(data => {
+    new Chart(document.getElementById('trendChart'), {
+      type: 'line',
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: 'Students Present',
+          data: data.values,
+          borderColor: '#22d3ee',
+          backgroundColor: 'rgba(34,211,238,0.12)',
+          tension: 0.35, fill: true, pointBackgroundColor: '#3b82f6'
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#7c8aa3' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y: { beginAtZero: true, ticks: { color: '#7c8aa3', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.04)' } }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}
