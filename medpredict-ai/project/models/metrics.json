@@ -1,0 +1,7 @@
+{
+  "random_forest_accuracy": 97.62,
+  "xgboost_accuracy": 97.62,
+  "xgboost_is_real": false,
+  "num_symptoms": 132,
+  "num_diseases": 41
+}

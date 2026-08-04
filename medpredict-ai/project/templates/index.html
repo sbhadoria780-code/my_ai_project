@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedPredict AI — Smart Health. Better Life.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="navbar">
+  <div class="nav-inner">
+    <a href="#" class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="17" cy="17" r="16" stroke="url(#g1)" stroke-width="2"/>
+        <path d="M6 17h4l2-5 3 10 3-7 2 4h8" stroke="url(#g1)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="34" y2="34"><stop stop-color="#2563EB"/><stop offset="1" stop-color="#14B8A6"/></linearGradient></defs>
+      </svg>
+      <span class="brand-text">MedPredict <b>AI</b><small>Smart Health. Better Life.</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#home" class="active">Home</a>
+      <a href="#about">About</a>
+      <a href="#predict">Predict</a>
+      <a href="#how">How It Works</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#predict" class="btn btn-primary btn-nav">Get Started <span>&rarr;</span></a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <h1>AI-Powered<br><span class="grad-text">Disease Prediction</span><br>for Better Health</h1>
+      <p>Enter your symptoms and let our AI models predict possible diseases and get personalized health suggestions.</p>
+      <div class="hero-actions">
+        <a href="#predict" class="btn btn-primary">Predict Now <span>&rarr;</span></a>
+        <a href="#how" class="btn btn-outline">Learn More <span>&rarr;</span></a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="visual-card">
+        <div class="visual-ring">
+          <svg viewBox="0 0 120 200" class="body-svg">
+            <path d="M60 10 a12 12 0 1 0 0.1 0" fill="none" stroke="#7dd3fc" stroke-width="2"/>
+            <line x1="60" y1="34" x2="60" y2="120" stroke="#7dd3fc" stroke-width="2"/>
+            <line x1="60" y1="55" x2="20" y2="90" stroke="#7dd3fc" stroke-width="2"/>
+            <line x1="60" y1="55" x2="100" y2="90" stroke="#7dd3fc" stroke-width="2"/>
+            <line x1="60" y1="120" x2="30" y2="190" stroke="#7dd3fc" stroke-width="2"/>
+            <line x1="60" y1="120" x2="90" y2="190" stroke="#7dd3fc" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="powered-by">
+          <span class="pb-label">Powered By</span>
+          <div class="pb-models">
+            <div class="pb-chip">🌲 Random Forest</div>
+            <div class="pb-chip">⚡ XGBoost</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="feature-strip">
+    <div class="feature-card">
+      <div class="fico blue">📋</div>
+      <h4>Symptom Input</h4>
+      <p>Enter your symptoms easily in a simple, searchable form.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fico teal">🔍</div>
+      <h4>Disease Prediction</h4>
+      <p>Our AI models (Random Forest &amp; XGBoost) predict possible diseases accurately.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fico purple">💜</div>
+      <h4>Health Suggestions</h4>
+      <p>Get personalized health tips and precautions to take better care of yourself.</p>
+    </div>
+    <div class="feature-card">
+      <div class="fico orange">🛡️</div>
+      <h4>Stay Healthy</h4>
+      <p>Early prediction leads to early prevention and a healthier tomorrow.</p>
+    </div>
+  </div>
+
+  <div class="trust-banner">
+    <div class="trust-left">
+      <span class="trust-ico">🩺</span>
+      <div>
+        <strong>Your Health is Our Priority</strong>
+        <p>AI-driven insights for a healthier and happier you.</p>
+      </div>
+    </div>
+    <div class="trust-right">
+      <span>🔒 Secure &amp; Private</span>
+      <span>⚡ Fast &amp; Accurate</span>
+      <span>✅ Trusted Technology</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PREDICT SECTION ============ -->
+<section class="predict-section" id="predict">
+  <div class="section-head">
+    <span class="eyebrow">Try It Now</span>
+    <h2>Tell us what you're feeling</h2>
+    <p>Select your symptoms below — the more you add, the more accurate the prediction.</p>
+  </div>
+
+  <div class="predict-grid">
+    <div class="predict-card">
+
+      <label class="field-label">Search &amp; select symptoms</label>
+      <div class="symptom-search">
+        <input type="text" id="symptomInput" placeholder="Type a symptom, e.g. headache, fatigue...">
+        <div id="symptomDropdown" class="symptom-dropdown"></div>
+      </div>
+
+      <div id="selectedChips" class="chips"></div>
+
+      <label class="field-label" style="margin-top:22px;">Choose model</label>
+      <div class="model-toggle">
+        <label class="model-option">
+          <input type="radio" name="modelChoice" value="both" checked>
+          <span>Compare Both</span>
+        </label>
+        <label class="model-option">
+          <input type="radio" name="modelChoice" value="rf">
+          <span>Random Forest</span>
+        </label>
+        <label class="model-option">
+          <input type="radio" name="modelChoice" value="xgb">
+          <span>XGBoost</span>
+        </label>
+      </div>
+
+      <button id="predictBtn" class="btn btn-primary btn-full">Predict Disease <span>&rarr;</span></button>
+      <p class="disclaimer">⚠️ This tool provides educational, AI-generated predictions and is not a substitute for professional medical advice.</p>
+    </div>
+
+    <div class="predict-card result-card" id="resultCard">
+      <div class="result-placeholder" id="resultPlaceholder">
+        <div class="ph-icon">🩺</div>
+        <h3>Your prediction will appear here</h3>
+        <p>Select at least one symptom and click "Predict Disease" to get started.</p>
+      </div>
+
+      <div id="resultContent" class="result-content" style="display:none;">
+        <div class="result-header">
+          <span id="severityBadge" class="badge">Medium</span>
+          <h3 id="diseaseName">—</h3>
+        </div>
+        <p id="diseaseDescription" class="disease-desc"></p>
+
+        <div id="modelComparison" class="model-comparison"></div>
+
+        <div class="precaution-block">
+          <h4>Recommended Precautions</h4>
+          <ul id="precautionList"></ul>
+        </div>
+
+        <div id="doctorNote" class="doctor-note"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how-section" id="how">
+  <div class="section-head">
+    <span class="eyebrow">How It Works</span>
+    <h2>From symptoms to insight in seconds</h2>
+  </div>
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="step-num">01</div>
+      <h4>Select Symptoms</h4>
+      <p>Choose from {{ symptoms|length }} known symptoms using our searchable input.</p>
+    </div>
+    <div class="how-step">
+      <div class="step-num">02</div>
+      <h4>AI Analyzes Patterns</h4>
+      <p>Random Forest and XGBoost models trained on {{ metrics.get('num_diseases', 41) }} diseases evaluate your input.</p>
+    </div>
+    <div class="how-step">
+      <div class="step-num">03</div>
+      <h4>Get Your Result</h4>
+      <p>See the predicted condition, model confidence, and tailored precautions.</p>
+    </div>
+  </div>
+
+  <div class="accuracy-strip">
+    <div class="acc-card">
+      <span class="acc-value">{{ metrics.get('random_forest_accuracy', '—') }}%</span>
+      <span class="acc-label">Random Forest Accuracy</span>
+    </div>
+    <div class="acc-card">
+      <span class="acc-value">{{ metrics.get('xgboost_accuracy', '—') }}%</span>
+      <span class="acc-label">XGBoost Accuracy</span>
+    </div>
+    <div class="acc-card">
+      <span class="acc-value">{{ metrics.get('num_symptoms', 132) }}</span>
+      <span class="acc-label">Symptoms Tracked</span>
+    </div>
+    <div class="acc-card">
+      <span class="acc-value">{{ metrics.get('num_diseases', 41) }}</span>
+      <span class="acc-label">Diseases Covered</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="about-section" id="about">
+  <div class="section-head">
+    <span class="eyebrow">About MedPredict AI</span>
+    <h2>Machine learning for early awareness</h2>
+    <p>MedPredict AI uses ensemble machine learning models trained on a curated symptom-disease dataset
+       to help you understand what might be going on with your health — so you know when it's time to see a doctor.</p>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer" id="contact">
+  <div class="footer-inner">
+    <div>
+      <span class="brand-text light">MedPredict <b>AI</b></span>
+      <p>AI-driven insights for a healthier and happier you.</p>
+    </div>
+    <p class="footer-note">Built for educational purposes · Not a substitute for professional medical advice.</p>
+  </div>
+</footer>
+
+<script id="symptomData" type="application/json">{{ symptoms|tojson }}</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
