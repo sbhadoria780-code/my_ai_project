@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ResumeOps — Transparent Resume Screening</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a href="{{ url_for('index') }}" class="sidebar-brand">
+        <span class="sidebar-brand-mark">RO</span>
+        <span class="sidebar-brand-text">
+          <span class="name">ResumeOps</span><br>
+          <span class="tag">screening, on the record</span>
+        </span>
+      </a>
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('index') }}" class="active">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span>
+          Dashboard
+        </a>
+        <span class="disabled">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity="0"/><path d="M3 6h18M3 12h18M3 18h18"/></svg></span>
+          Results
+        </span>
+        <span class="disabled">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+          Export
+        </span>
+      </nav>
+      <div class="sidebar-foot">RESUMEOPS · every score is explainable</div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-title">
+            <h1>New Screening</h1>
+            <p>Set requirements, upload resumes, get a ranked, explainable list</p>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <span class="topbar-badge">Human decision required on every case</span>
+          <div class="avatar">RO</div>
+        </div>
+      </header>
+
+      <main id="main" class="content">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="hero">
+          <div class="hero-eyebrow">Transparent Screening</div>
+          <h1>Screen resumes. Show your work.</h1>
+          <p>
+            Every score below is arithmetic you can read, not a model trained on
+            someone else's hiring history. No candidate is ever auto-rejected —
+            the system ranks, a person decides, and both steps go on the record.
+          </p>
+        </div>
+
+        <div class="split">
+
+          <div class="card">
+            <h3 style="margin-top:0;">New Requisition</h3>
+            <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+
+              <label for="job_title">Job title *</label>
+              <input type="text" id="job_title" name="job_title" placeholder="e.g. Backend Engineering Intern" required>
+
+              <label for="required_skills">Required skills * <span style="text-transform:none; font-weight:400;">(comma-separated)</span></label>
+              <textarea id="required_skills" name="required_skills"
+                placeholder="python, django, sql, aws, docker" required></textarea>
+              <small class="hint">
+                From the built-in taxonomy: {{ default_skills[:10] | join(', ') }} &hellip;
+                or add your own terms — the matcher checks whatever you list here.
+              </small>
+
+              <label for="required_experience">Minimum years of experience</label>
+              <input type="number" id="required_experience" name="required_experience" min="0" value="0">
+
+              <label for="required_education">Minimum education level</label>
+              <input type="text" id="required_education" name="required_education"
+                placeholder="e.g. bachelor, master, phd">
+              <small class="hint">Leave blank if there's no education requirement.</small>
+
+              <label for="resumes">Resume files * <span style="text-transform:none; font-weight:400;">(.pdf, .docx, .txt — multiple allowed)</span></label>
+              <input type="file" id="resumes" name="resumes" multiple accept=".pdf,.docx,.txt" required>
+              <small class="hint" id="file-count-label">No files selected</small>
+
+              <button type="submit" class="btn">Screen resumes</button>
+            </form>
+          </div>
+
+          <div>
+            <div class="card">
+              <h3 style="margin-top:0;">How It Works</h3>
+              <ol class="process">
+                <li>
+                  <div class="process-num">1</div>
+                  <div class="process-body">
+                    <h3>Parse &amp; anonymize</h3>
+                    <p>Text is pulled from each file, then name, email, phone, address, and age are stripped before scoring begins.</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="process-num">2</div>
+                  <div class="process-body">
+                    <h3>Score, transparently</h3>
+                    <p>Skills, experience, and education are matched against your stated requirements with fixed, readable weights — no trained black box.</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="process-num">3</div>
+                  <div class="process-body">
+                    <h3>A person decides</h3>
+                    <p>Reviewers see the full breakdown and resume text, then record Advance, Hold, Reject, or Request Info — logged with their name.</p>
+                  </div>
+                </li>
+              </ol>
+            </div>
+          </div>
+
+        </div>
+
+        <p class="footnote">RESUMEOPS · every score is explainable · every decision is logged</p>
+      </main>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Results — {{ job['title'] }} · ResumeOps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a href="{{ url_for('index') }}" class="sidebar-brand">
+        <span class="sidebar-brand-mark">RO</span>
+        <span class="sidebar-brand-text">
+          <span class="name">ResumeOps</span><br>
+          <span class="tag">screening, on the record</span>
+        </span>
+      </a>
+      <nav class="sidebar-nav">
+        <a href="{{ url_for('index') }}">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span>
+          Dashboard
+        </a>
+        <a href="{{ url_for('results', job_id=job['id']) }}" class="active">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span>
+          Results
+        </a>
+        <a href="{{ url_for('export_audit', job_id=job['id']) }}">
+          <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+          Export
+        </a>
+      </nav>
+      <div class="sidebar-foot">RESUMEOPS · every score is explainable</div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-title">
+            <h1>{{ job['title'] }}</h1>
+            <p>Case opened {{ job['created_at'][:10] }}</p>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <a href="{{ url_for('index') }}" class="btn secondary small">+ New screening</a>
+          <div class="avatar">RO</div>
+        </div>
+      </header>
+
+      <main id="main" class="content">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Stat cards -->
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <div><div class="stat-num">{{ stats.total }}</div><div class="stat-label">Total Candidates</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <div><div class="stat-num">{{ stats.top_score }}</div><div class="stat-label">Top Score</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg></div>
+            <div><div class="stat-num">{{ stats.avg_score }}</div><div class="stat-label">Average Score</div></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon warning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.4 7 .6-5.3 4.6 1.6 6.9-6.2-3.7-6.2 3.7 1.6-6.9-5.3-4.6 7-.6z"/></svg></div>
+            <div><div class="stat-num">{{ stats.advance_count }}</div><div class="stat-label">Recommended</div></div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <p class="chart-card-title">Review Status Distribution</p>
+            {% if stats.total > 0 %}
+            <div class="donut-wrap">
+              <div class="donut" style="background: conic-gradient(
+                {% for seg in donut_segments %}{{ seg.color }} {{ seg.start }}% {{ seg.end }}%{{ ', ' if not loop.last else '' }}{% endfor %}
+              );">
+                <div class="donut-inner"><span class="val">{{ stats.total }}</span><span class="unit">Total</span></div>
+              </div>
+              <div class="donut-legend">
+                {% for seg in donut_segments %}
+                  {% if seg.count > 0 %}
+                  <div class="donut-legend-item"><span class="donut-legend-dot" style="background:{{ seg.color }};"></span>{{ seg.label }} <b>{{ seg.count }}</b></div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+            {% else %}
+              <p style="color:var(--ink-500); font-size:13.5px;">No candidates yet.</p>
+            {% endif %}
+          </div>
+
+          <div class="card">
+            <p class="chart-card-title">Score Distribution</p>
+            {% if stats.total > 0 %}
+            <div class="bar-chart">
+              {% set band_labels = ['0-20', '21-40', '41-60', '61-80', '81-100'] %}
+              {% for count in buckets %}
+                <div class="bar-col">
+                  <span class="bar-count">{{ count }}</span>
+                  <div class="bar" style="height: {{ (count / bucket_peak * 100) if bucket_peak > 0 else 0 }}%;"></div>
+                  <span class="bar-label">{{ band_labels[loop.index0] }}</span>
+                </div>
+              {% endfor %}
+            </div>
+            {% else %}
+              <p style="color:var(--ink-500); font-size:13.5px;">No candidates yet.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3 style="margin:0;">Ranked Candidates — {{ candidates|length }}</h3>
+              <p style="font-size:13px;color:var(--ink-500); margin:4px 0 0;">
+                Ranking is advisory only. Every candidate requires a logged human decision before advancing.
+              </p>
+            </div>
+            <a href="{{ url_for('export_audit', job_id=job['id']) }}" class="btn secondary small">Export audit report (CSV)</a>
+          </div>
+
+          <div class="req-strip" style="margin-bottom:18px;">
+            <div class="req-item"><span class="req-label">Required skills</span>{{ job['required_skills'] }}</div>
+            <div class="req-item"><span class="req-label">Min. experience</span>{{ job['required_experience_years'] }} years</div>
+            <div class="req-item"><span class="req-label">Min. education</span>{{ job['required_education'] or 'Not specified' }}</div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="ledger">
+              <thead>
+                <tr>
+                  <th>#</th><th>Candidate</th><th>Match</th><th>Experience</th><th>Education</th><th>Status</th><th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in candidates %}
+                {% set label = (c['display_name'] or c['filename']) %}
+                <tr>
+                  <td class="ledger-rank">{{ '%02d' % loop.index }}</td>
+                  <td>
+                    <div class="ledger-cand">
+                      <div class="ledger-avatar">{{ label[0]|upper }}</div>
+                      <div>
+                        <div class="ledger-name">{{ label }}</div>
+                        <div class="ledger-sub">{{ c['filename'] }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    {% if c['score_band'] == 'Strong match' %}
+                      <span class="score-pill tone-strong">{{ c['overall_score']|round|int }}</span>
+                    {% elif c['score_band'] == 'Possible match' %}
+                      <span class="score-pill tone-possible">{{ c['overall_score']|round|int }}</span>
+                    {% else %}
+                      <span class="score-pill tone-weak">{{ c['overall_score']|round|int }}</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ c['experience_years'] }} yrs</td>
+                  <td>{{ c['education_level'] }}</td>
+                  <td>
+                    {% set s = c['review_status'] %}
+                    {% if s == 'Advance' %}<span class="flag status-advance">Advance</span>
+                    {% elif s == 'Hold' %}<span class="flag status-hold">Hold</span>
+                    {% elif s == 'Reject' %}<span class="flag status-reject">Reject</span>
+                    {% elif s == 'Request More Info' %}<span class="flag status-request">More info</span>
+                    {% else %}<span class="flag status-pending">Pending</span>
+                    {% endif %}
+                  </td>
+                  <td><a class="view-link" href="{{ url_for('candidate_detail', candidate_id=c['id']) }}">Open case &rarr;</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="footnote">RESUMEOPS · every score is explainable · every decision is logged</p>
+      </main>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
